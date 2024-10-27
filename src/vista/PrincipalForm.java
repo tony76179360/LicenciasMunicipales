@@ -101,13 +101,28 @@ public class PrincipalForm extends javax.swing.JFrame {
         jDesktopPane1.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1480, 80));
 
         btnRegistro.setText("Registro");
+        btnRegistro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistroActionPerformed(evt);
+            }
+        });
         jDesktopPane1.add(btnRegistro, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 120, 50));
 
         btnbusqueda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/busqueda.png"))); // NOI18N
         btnbusqueda.setText("Busqueda");
+        btnbusqueda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnbusquedaActionPerformed(evt);
+            }
+        });
         jDesktopPane1.add(btnbusqueda, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 340, 120, 50));
 
         btnReportes.setText("Reportes");
+        btnReportes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReportesActionPerformed(evt);
+            }
+        });
         jDesktopPane1.add(btnReportes, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 420, 120, 50));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/fondoleft.jpg"))); // NOI18N
@@ -159,6 +174,26 @@ public class PrincipalForm extends javax.swing.JFrame {
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         System.exit(0);
     }//GEN-LAST:event_btnSalirActionPerformed
+
+    private void btnRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroActionPerformed
+    
+        RegistroForm registroForm = new RegistroForm();
+        registroForm.setVisible(true);
+        registroForm.setLocationRelativeTo(null);
+        
+    }//GEN-LAST:event_btnRegistroActionPerformed
+
+    private void btnbusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbusquedaActionPerformed
+        BusquedaForm busquedaForm = new BusquedaForm();
+        busquedaForm.setVisible(true);
+        busquedaForm.setLocationRelativeTo(null);
+    }//GEN-LAST:event_btnbusquedaActionPerformed
+
+    private void btnReportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportesActionPerformed
+        ReportesForm reportesForm = new ReportesForm();
+        reportesForm.setVisible(true);
+        reportesForm.setLocationRelativeTo(null);
+    }//GEN-LAST:event_btnReportesActionPerformed
 
     /**
      * @param args the command line arguments
