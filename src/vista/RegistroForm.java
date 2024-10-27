@@ -42,6 +42,7 @@ public class RegistroForm extends javax.swing.JFrame {
     private void initComponents() {
 
         btnImportar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaDatos = new javax.swing.JTable();
         btnAgregar = new javax.swing.JButton();
@@ -69,6 +70,14 @@ public class RegistroForm extends javax.swing.JFrame {
         });
         getContentPane().add(btnImportar, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 120, 100, 40));
 
+        btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 180, 100, 40));
+
         tablaDatos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -82,7 +91,7 @@ public class RegistroForm extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tablaDatos);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 270, 690, 340));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 270, 850, 340));
 
         btnAgregar.setText("Agregar");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
@@ -200,6 +209,48 @@ public class RegistroForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnAgregarActionPerformed
 
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        int[] filasSeleccionadas = tablaDatos.getSelectedRows();
+    
+        if (filasSeleccionadas.length == 0) {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione registros para eliminar");
+            return;
+        }
+        
+        int confirmacion = JOptionPane.showConfirmDialog(this,
+                "¿Está seguro de eliminar " + filasSeleccionadas.length + " registro(s)?",
+                "Confirmar Eliminación",
+                JOptionPane.YES_NO_OPTION);
+                
+        if (confirmacion == JOptionPane.YES_OPTION) {
+            DefaultTableModel modelo = (DefaultTableModel) tablaDatos.getModel();
+            // Eliminar desde el último índice para evitar problemas con los índices
+            for (int i = filasSeleccionadas.length - 1; i >= 0; i--) {
+                modelo.removeRow(filasSeleccionadas[i]);
+            }
+            actualizarArchivo();
+            JOptionPane.showMessageDialog(this, "Registros eliminados exitosamente");
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+    
+    private void actualizarArchivo() {
+        DefaultTableModel modelo = (DefaultTableModel) tablaDatos.getModel();
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("licencias.txt", false))) {
+            for (int i = 0; i < modelo.getRowCount(); i++) {
+                StringBuilder linea = new StringBuilder();
+                for (int j = 0; j < modelo.getColumnCount(); j++) {
+                    linea.append(modelo.getValueAt(i, j));
+                    if (j < modelo.getColumnCount() - 1) {
+                        linea.append(SEPARATOR);
+                    }
+                }
+                bw.write(linea.toString());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error al actualizar el archivo: " + e.getMessage());
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -245,6 +296,7 @@ public class RegistroForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnImportar;
     private javax.swing.JComboBox<String> cmbTipo;
     private javax.swing.JLabel jLabel1;
