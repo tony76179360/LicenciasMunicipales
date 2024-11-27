@@ -4,32 +4,37 @@
  */
 package vista;
 
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
+import licenciasmunicipales.ListaEnlazada;
+import licenciasmunicipales.Nodo;
+
+
+
 
 /**
  *
  * @author PC_TONY
  */
 public class RegistroForm extends javax.swing.JFrame {
-    private static final String SEPARATOR = "\t";
-    /**
-     * Creates new form RegistroForm
-     */
+    
+    private String[][] datos; 
+    private int numFilas; 
+    private int numColumnas; 
+    private ListaEnlazada listaEnlazada = new ListaEnlazada();
+    
     public RegistroForm() {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
-        DefaultTableModel modelo = (DefaultTableModel) tablaDatos.getModel();
-        modelo.setColumnIdentifiers(new String[]{"RUC", "Actividad", "Área", "Tipo de Licencia"});
+        
     }
 
     /**
@@ -55,11 +60,11 @@ public class RegistroForm extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         cmbTipo = new javax.swing.JComboBox<>();
         txtTipo = new javax.swing.JTextField();
+        btnExportar = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(900, 660));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btnImportar.setText("importar");
@@ -68,7 +73,7 @@ public class RegistroForm extends javax.swing.JFrame {
                 btnImportarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnImportar, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 120, 100, 40));
+        getContentPane().add(btnImportar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, 100, 40));
 
         btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -76,7 +81,7 @@ public class RegistroForm extends javax.swing.JFrame {
                 btnEliminarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 180, 100, 40));
+        getContentPane().add(btnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 220, 100, 40));
 
         tablaDatos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -91,7 +96,7 @@ public class RegistroForm extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tablaDatos);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 270, 850, 340));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 880, 340));
 
         btnAgregar.setText("Agregar");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
@@ -99,7 +104,7 @@ public class RegistroForm extends javax.swing.JFrame {
                 btnAgregarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 120, 100, 40));
+        getContentPane().add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 60, 100, 40));
 
         jLabel1.setText("Ruc:");
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 70, -1, -1));
@@ -114,16 +119,24 @@ public class RegistroForm extends javax.swing.JFrame {
         getContentPane().add(txtArea, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 70, 120, -1));
 
         jLabel4.setText("Tipo de lincencia:");
-        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 130, -1, -1));
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 120, -1, -1));
 
-        cmbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Definitiva", "Temporal", "Consecionaria" }));
+        cmbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "LICENCIA DE FUNCIONAMIENTO DEFINITIVA", "LICENCIA DE FUNCIONAMIENTO TEMPORAL", "LICENCIA DE FUNCIONAMIENTO CONSECIONARIA" }));
         cmbTipo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbTipoActionPerformed(evt);
             }
         });
-        getContentPane().add(cmbTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 130, -1, -1));
-        getContentPane().add(txtTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 130, 130, -1));
+        getContentPane().add(cmbTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 120, 310, -1));
+        getContentPane().add(txtTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 150, 310, -1));
+
+        btnExportar.setText("Exportar");
+        btnExportar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnExportar, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 220, 90, 40));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -142,148 +155,142 @@ public class RegistroForm extends javax.swing.JFrame {
     }//GEN-LAST:event_cmbTipoActionPerformed
 
     private void btnImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportarActionPerformed
-        String rutaArchivo = "C:\\Users\\PC_TONY\\Documents\\NetBeansProjects\\LicenciasMunicipales\\LicenciasMunicipales\\licencias.txt";
-    
-    // Obtener el modelo de la tabla
-    DefaultTableModel modelo = (DefaultTableModel) tablaDatos.getModel();
-    
-    // Limpiar la tabla antes de agregar nuevos datos
-    modelo.setRowCount(0);
-    
-    try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(rutaArchivo), "UTF-8"))) {
-        String linea;
-        
-        // Leer el archivo línea por línea
-        while ((linea = br.readLine()) != null) {
-            // Suponiendo que los datos en cada línea están separados por comas (,)
-            String[] datos = linea.split(SEPARATOR);
-            
-            // Agregar la línea como una nueva fila en la tabla
-           if (datos.length == 4) {
-                    modelo.addRow(datos);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Seleccionar archivo CSV");
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            try {
+                cargarDatosDesdeCSV(file);
+                mostrarDatosEnTabla();
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error al leer el archivo: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-            
-            
         }
-        
-        
-    } catch (IOException e) {
-        e.printStackTrace();
-        javax.swing.JOptionPane.showMessageDialog(this, "Error al leer el archivo.");
-    }
     }//GEN-LAST:event_btnImportarActionPerformed
 
-    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-        DefaultTableModel modelo = (DefaultTableModel) tablaDatos.getModel();
+    private void cargarDatosDesdeCSV(File file) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(file));
+    String linea;
+    boolean primeraLinea = true;
+
+    while ((linea = br.readLine()) != null) {
+        // Dividir la línea por comas
+        String[] fila = linea.split(",");
         
-        try {
-            // Obtener datos de los campos
-            String ruc = txtRuc.getText();
-            String actividad = txtActividad.getText();
-            String area = txtArea.getText();
-            String tipo = txtTipo.getText();
-            
-            // Validar que los campos no estén vacíos
-            if(ruc.isEmpty() || actividad.isEmpty() || area.isEmpty() || tipo.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios");
-                return;
-            }
-            
-            // Agregar datos a la tabla
-            modelo.addRow(new Object[]{ruc, actividad, area, tipo});
-            
-            // Agregar datos al archivo
-            FileWriter fw = new FileWriter("licencias.txt", true); // true para append
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(ruc + SEPARATOR + actividad + SEPARATOR + area + SEPARATOR + tipo);
-            bw.newLine();
-            bw.close();
-            
-            // Limpiar campos
-            limpiarCampos();
-            
-            JOptionPane.showMessageDialog(this, "Registro agregado exitosamente");
-            
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error al guardar en el archivo: " + e.getMessage());
+        if (primeraLinea) {
+            // Ignorar la primera línea si es el encabezado
+            primeraLinea = false;
+            continue;
         }
+        // Agrega la fila a la lista enlazada
+        listaEnlazada.agregar(fila);
+    }
+    br.close();
+    // Actualizar la tabla después de cargar los datos
+    actualizarTabla();
+}
+    private void mostrarDatosEnTabla() {
+        
+    if (datos == null || numFilas == 0 || numColumnas == 0) {
+        JOptionPane.showMessageDialog(this, "Archivo Importado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        return;
+    }
+    // Obtener los encabezados de las columnas desde la primera fila
+    String[] columnas = new String[numColumnas];
+    for (int i = 0; i < numColumnas; i++) {
+        columnas[i] = datos[0][i];
+    }
+
+    // Crea una nueva matriz para los datos excluyendo la fila de encabezados
+    String[][] datosTabla = new String[numFilas - 1][numColumnas];
+    for (int i = 1; i < numFilas; i++) {
+        System.arraycopy(datos[i], 0, datosTabla[i - 1], 0, numColumnas);
+    }
+
+    javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(datosTabla, columnas);
+    tablaDatos.setModel(model); // tablaDatos es el JTable
+    
+    
+}
+    
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        // Obtener los datos 
+    String ruc = txtRuc.getText();
+    String actividad = txtActividad.getText();
+    String area = txtArea.getText();
+    String tipo = (String) cmbTipo.getSelectedItem(); // Obtener el valor seleccionado
+
+    // Validar que los campos no estén vacíos
+    if (ruc.isEmpty() || actividad.isEmpty() || area.isEmpty() || tipo == null) {
+        JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    String[] nuevaFila = {ruc, actividad, area, tipo};
+
+    listaEnlazada.agregar(nuevaFila);
+
+    actualizarTabla();
+            
+    JOptionPane.showMessageDialog(this, "¡Datos agregados correctamente!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    
+    txtRuc.setText("");
+    txtActividad.setText("");
+    txtArea.setText("");
+    cmbTipo.setSelectedIndex(0);
     }//GEN-LAST:event_btnAgregarActionPerformed
 
+    private void actualizarTabla() {
+    // Obtener los datos desde la lista enlazada
+    String[][] datos = listaEnlazada.obtenerDatos();
+
+    String[] columnas = {"RUC", "Actividad", "Área", "Tipo de Licencia"};
+
+    // Configurar el modelo de la tabla
+    javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(datos, columnas);
+    tablaDatos.setModel(model);
+}
+    
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        int[] filasSeleccionadas = tablaDatos.getSelectedRows();
     
-        if (filasSeleccionadas.length == 0) {
-            JOptionPane.showMessageDialog(this, "Por favor, seleccione registros para eliminar");
-            return;
-        }
-        
-        int confirmacion = JOptionPane.showConfirmDialog(this,
-                "¿Está seguro de eliminar " + filasSeleccionadas.length + " registro(s)?",
-                "Confirmar Eliminación",
-                JOptionPane.YES_NO_OPTION);
-                
-        if (confirmacion == JOptionPane.YES_OPTION) {
-            DefaultTableModel modelo = (DefaultTableModel) tablaDatos.getModel();
-            // Eliminar desde el último índice para evitar problemas con los índices
-            for (int i = filasSeleccionadas.length - 1; i >= 0; i--) {
-                modelo.removeRow(filasSeleccionadas[i]);
-            }
-            actualizarArchivo();
-            JOptionPane.showMessageDialog(this, "Registros eliminados exitosamente");
-        }
     }//GEN-LAST:event_btnEliminarActionPerformed
+
     
-    private void actualizarArchivo() {
-        DefaultTableModel modelo = (DefaultTableModel) tablaDatos.getModel();
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("licencias.txt", false))) {
-            for (int i = 0; i < modelo.getRowCount(); i++) {
-                StringBuilder linea = new StringBuilder();
-                for (int j = 0; j < modelo.getColumnCount(); j++) {
-                    linea.append(modelo.getValueAt(i, j));
-                    if (j < modelo.getColumnCount() - 1) {
-                        linea.append(SEPARATOR);
-                    }
-                }
-                bw.write(linea.toString());
-                bw.newLine();
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error al actualizar el archivo: " + e.getMessage());
+    
+    private void exportarDatosACSV(String archivoDestino) {
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivoDestino))) {
+        // Encabezados del archivo CSV
+        bw.write("RUC,Actividad,Área,Tipo de Licencia");
+        bw.newLine();
+
+        // Recorrer los nodos de la lista enlazada y escribir los datos en el archivo
+        Nodo actual = listaEnlazada.getCabeza();
+        while (actual != null) {
+            String[] fila = actual.getDatos();
+            bw.write(String.join(",", fila));
+            bw.newLine();
+            actual = actual.getSiguiente();
         }
+
+        JOptionPane.showMessageDialog(this, "¡Datos exportados correctamente al archivo: " + archivoDestino + "!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+    } catch (IOException e) {
+        JOptionPane.showMessageDialog(this, "Error al exportar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
+    }
+    
+    private void btnExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarActionPerformed
+
+    String archivoDestino = System.getProperty("user.home") + "/Desktop/LicenciasExport.csv";
+    
+    exportarDatosACSV(archivoDestino);
+    }//GEN-LAST:event_btnExportarActionPerformed
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RegistroForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RegistroForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RegistroForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RegistroForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new RegistroForm().setVisible(true);
-            }
-        });
+        java.awt.EventQueue.invokeLater(() -> new RegistroForm().setVisible(true));
     }
     
     private void limpiarCampos() {
@@ -297,6 +304,7 @@ public class RegistroForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnExportar;
     private javax.swing.JButton btnImportar;
     private javax.swing.JComboBox<String> cmbTipo;
     private javax.swing.JLabel jLabel1;
