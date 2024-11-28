@@ -13,6 +13,7 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import licenciasmunicipales.ListaEnlazada;
 import licenciasmunicipales.Nodo;
 
@@ -32,6 +33,8 @@ public class RegistroForm extends javax.swing.JFrame {
     
     public RegistroForm() {
         initComponents();
+        
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         
@@ -67,7 +70,8 @@ public class RegistroForm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        btnImportar.setText("importar");
+        btnImportar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnImportar.setText("Importar");
         btnImportar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnImportarActionPerformed(evt);
@@ -75,6 +79,7 @@ public class RegistroForm extends javax.swing.JFrame {
         });
         getContentPane().add(btnImportar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, 100, 40));
 
+        btnEliminar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -98,6 +103,7 @@ public class RegistroForm extends javax.swing.JFrame {
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 880, 340));
 
+        btnAgregar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnAgregar.setText("Agregar");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -130,6 +136,7 @@ public class RegistroForm extends javax.swing.JFrame {
         getContentPane().add(cmbTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 120, 310, -1));
         getContentPane().add(txtTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 150, 310, -1));
 
+        btnExportar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnExportar.setText("Exportar");
         btnExportar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -193,24 +200,22 @@ public class RegistroForm extends javax.swing.JFrame {
 }
     private void mostrarDatosEnTabla() {
         
-    if (datos == null || numFilas == 0 || numColumnas == 0) {
-        JOptionPane.showMessageDialog(this, "Archivo Importado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
-        return;
-    }
-    // Obtener los encabezados de las columnas desde la primera fila
-    String[] columnas = new String[numColumnas];
-    for (int i = 0; i < numColumnas; i++) {
-        columnas[i] = datos[0][i];
+    DefaultTableModel modelo = new DefaultTableModel(new String[] {"RUC", "Actividad", "Área", "Tipo de Licencia"}, 0);
+    tablaDatos.setModel(modelo);    
+    // Limpiar los datos existentes en la tabla antes de mostrar los nuevos
+    modelo.setRowCount(0);
+
+    // Recorremos la lista enlazada y mostramos sus datos en la tabla
+    Nodo actual = listaEnlazada.getCabeza();
+    while (actual != null) {
+        String[] datos = actual.getDatos();
+        modelo.addRow(datos); // Agregar los datos a la tabla
+        actual = actual.getSiguiente(); // Avanzar al siguiente nodo
     }
 
-    // Crea una nueva matriz para los datos excluyendo la fila de encabezados
-    String[][] datosTabla = new String[numFilas - 1][numColumnas];
-    for (int i = 1; i < numFilas; i++) {
-        System.arraycopy(datos[i], 0, datosTabla[i - 1], 0, numColumnas);
-    }
-
-    javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(datosTabla, columnas);
-    tablaDatos.setModel(model); // tablaDatos es el JTable
+    // Refrescar la vista de la tabla
+    tablaDatos.revalidate();
+    tablaDatos.repaint();
     
     
 }
@@ -253,7 +258,23 @@ public class RegistroForm extends javax.swing.JFrame {
 }
     
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-    
+        // Obtener la fila seleccionada
+    int filaSeleccionada = tablaDatos.getSelectedRow();
+
+    if (filaSeleccionada == -1) {
+        JOptionPane.showMessageDialog(this, "Por favor, selecciona una fila para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // Eliminar el nodo correspondiente en la lista enlazada
+    listaEnlazada.eliminarEnPosicion(filaSeleccionada);
+
+    // Actualizar la tabla para reflejar los cambios
+    mostrarDatosEnTabla();
+
+    // Exportar los datos actualizados al archivo CSV
+
+    JOptionPane.showMessageDialog(this, "Elemento eliminado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     
@@ -272,11 +293,9 @@ public class RegistroForm extends javax.swing.JFrame {
             bw.newLine();
             actual = actual.getSiguiente();
         }
-
-        JOptionPane.showMessageDialog(this, "¡Datos exportados correctamente al archivo: " + archivoDestino + "!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
+        JOptionPane.showMessageDialog(null, "Datos exportados correctamente al archivo: " + archivoDestino, "Exportación Exitosa", JOptionPane.INFORMATION_MESSAGE);
     } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error al exportar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Error al exportar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
     }
     

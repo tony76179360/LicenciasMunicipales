@@ -60,6 +60,36 @@ public class ListaEnlazada {
         return lineaCSV.toString();
     }
     
+     // Método para eliminar un nodo en una posición específica
+    public void eliminarEnPosicion(int posicion) {
+        if (cabeza == null) {
+            JOptionPane.showMessageDialog(null, "La lista está vacía, no se puede eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (posicion == 0) { // Eliminar la cabeza
+            cabeza = cabeza.getSiguiente();
+            return;
+        }
+
+        Nodo actual = cabeza;
+        Nodo previo = null;
+        int index = 0;
+
+        while (actual != null && index < posicion) {
+            previo = actual;
+            actual = actual.getSiguiente();
+            index++;
+        }
+
+        if (actual == null) {
+            JOptionPane.showMessageDialog(null, "Posición inválida. No se encontró el elemento.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Desconectar el nodo de la lista
+        previo.setSiguiente(actual.getSiguiente());
+    }
  
 
     // Getter para la cabeza de la lista
